@@ -26,16 +26,32 @@
   </block>
 </swiper>
 
-<!-- 分类 -->
+<!-- 分类的选项数据 -->
 <view class="shop-classify">
   <block v-for="(item,index) in cateitems" :key="index">
-  <image :src="item.image_src"></image>
+  <image :src="item.image_src" mode="aspectfill"></image>
   </block>
-
+</view>
+<!-- 楼层数据-->
+<view class='floor'>
+<view class="floor_title">
+  <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_title.png"></image>
+</view>
+<view class="floor_content">
+  <view class="floor_content_left">
+  <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_1@2x.png"></image>
+  </view>
+  <view class="floor_content_right">
+     <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_2@2x.png"></image>
+    <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_3@2x.png"></image>
+    <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_4@2x.png"></image>
+    <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_5@2x.png"></image>
+  </view>
+</view>
+</view>
 
 </view>
 
-  </view> 
 </template>
 
 <script>
@@ -58,11 +74,13 @@ onLoad(){
   }
  }
 }),
+  // 分类的选项数据
  wx.request({
   method:"get",
   url:"https://www.zhengzhicheng.cn/api/public/v1/home/catitems",
   success:res=>{
   //  console.log(res);
+  // 在页面为匹配完之前是否有图片对象的数据不完整，，name和navaigator_url的
   if(res.data.meta.status==200){
   this.cateitems=res.data.message;
   }
@@ -91,6 +109,10 @@ onLoad(){
  align-items: center;
 }
 /* 轮播图 */
+/* 轮播图有自己的高度。需要更改的他的高度，以防图片失真，缩放等 */
+swiper{
+  height: 340rpx;
+}
 .shop-swiper image{
 width:750rpx;
 height: 340rpx;
@@ -100,15 +122,44 @@ height: 340rpx;
 .shop-classify{
   display: flex;
   justify-content: space-around;
-  padding:10rpx;
+  padding:20rpx 0 30rpx 0;
   /* align-items: center; */
 }
 .shop-classify image{
   /* flex:1; */
+  /* 固定图片的宽高 */
   width:128rpx;
   height: 140rpx;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* 楼层 */
+.floor_title {
+  padding:30rpx 0 10rpx 0;
+  background-color: #f4f4f4;
+}
+.floor_title image{
+  width:750rpx;
+  height: 59rpx;
+}
+
+.floor_content {
+  /* 楼层内的图片是弹性布局，padding是设置内边距 */
+display: flex;
+padding:20rpx;
+}
+/* 左边一张大图的设置，，固定宽高 */
+.floor_content_left image{
+width:232rpx;
+height: 386rpx;
+}
+/* 右边四张图固定宽高，且有外边距的 */
+.floor_content_right image{
+  width:233rpx;
+  height: 188rpx;
+  margin-left:10rpx;
+  /* margin-bottom:20rpx; */
 }
 </style>
