@@ -34,20 +34,26 @@
 </view>
 <!-- 楼层数据-->
 <view class='floor'>
+  <block v-for="(item,index) in floor" :key="index">
 <view class="floor_title">
-  <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_title.png"></image>
+  <image mode="aspectfill" :src="item.floor_title.image_src"></image>
 </view>
 <view class="floor_content">
   <view class="floor_content_left">
-  <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_1@2x.png"></image>
+  <image mode="aspectfill"  :src="item.product_list[0].image_src"></image>
   </view>
   <view class="floor_content_right">
-     <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_2@2x.png"></image>
-    <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_3@2x.png"></image>
-    <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_4@2x.png"></image>
-    <image mode="aspectfill" src="https://lg-igjc8p1o-1256763078.cos.ap-shanghai.myqcloud.com/upload/pic_floor01_5@2x.png"></image>
+    <!-- v-for 能嵌套v-if，，但是很多 编辑器可能会报错的
+     -->
+  <block v-for="(item2,index2) in item.product_list" :key="index2">
+    <!-- 判断索引值，当索引值大于1时，再循环 -->
+    <block  v-if="index2>=1">
+    <image mode="aspectfill"  :src="item2.image_src"></image>
+    </block>
+  </block>
   </view>
 </view>
+</block>
 </view>
 
 </view>
@@ -59,7 +65,10 @@ export default {
 data(){
   return {
     imgUrls:[],
-    cateitems:[]
+    cateitems:[],
+    flag:false,
+    floor:[],
+    product_list:[{}]
   }
 },
 onLoad(){
@@ -83,6 +92,22 @@ onLoad(){
   // 在页面为匹配完之前是否有图片对象的数据不完整，，name和navaigator_url的
   if(res.data.meta.status==200){
   this.cateitems=res.data.message;
+  }
+ }
+}),
+
+// 楼层数据
+ wx.request({
+  method:"get",
+  url:"https://www.zhengzhicheng.cn/api/public/v1/home/floordata",
+  success:res=>{
+    // 有floor层的，在每一层有title和content
+   console.log(res);
+  // 在页面为匹配完之前是否有图片对象的数据不完整，，name和navaigator_url的
+  if(res.data.meta.status==200){
+  this.floor=res.data.message;
+  // debugger;
+  // console.log(this.product_list);
   }
  }
 })
