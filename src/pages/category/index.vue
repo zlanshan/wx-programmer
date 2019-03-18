@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import Search from '../../components/search'
+import Search from '../../components/search';
+import request from '../../utils/request.js'
 export default {
 data(){
   return {
@@ -62,7 +63,9 @@ components:{
 Search
 },
 onLoad(){
-
+ request("https://www.zhengzhicheng.cn/api/public/v1/categories").then(res=>{
+   console.log(res);
+ })
 }
 }
 </script>
