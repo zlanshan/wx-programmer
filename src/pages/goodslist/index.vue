@@ -1,44 +1,6 @@
 <template>
   <view> 
-    <!-- 搜索框 -->
-    <search></search>
-  
-  <!-- 导航栏 -->
-  <view class="nav">
-  <!-- 左侧的导航栏 scroll-view肯定要设置滚动的方向-->
-  <scroll-view scroll-y class="nav_left">
-    <block v-for="(item,index) in classify" :key="index">
-      <!-- "{active:'index===tabIndex'}" 这个方式是全选了？-->
-      <!-- {active:index===tabIndex}对象的方式获取值？？ -->
-      <view class="item" :class="{active:index===tabIndex}" @tap="tapItem(index)">{{item.cat_name}}</view>
-      </block>
-  </scroll-view>
-
-
-  <scroll-view scroll-y class="nav_right">
-    <!-- 大标题 -->
-    <!-- <block v-for="(item,index) in classify" :key="index"> -->
-     <block v-for="(subItem,subIndex) in rightData" :key="subIndex">
-     <view class="nav_right_title">
-       <!-- <image mode="aspectfill" :src="subItem.cat_icon"></image> -->
-       {{subItem.cat_name}}
-    </view>
-     <!-- 标题下的所有子项 -->
-     <view class="nav_right_content">
-       <block v-for="(item3,index3) in subItem.children" :key="index3">
-         <view class="subItem" @tap="tapGoodsList(item3.cat_name)">
-       <image mode="aspectfill" :src="item3.cat_icon"></image>
-       <view>{{item3.cat_name}}</view>
-       </view>
-       </block>
-       
-    </view>
-     </block>
-    <!-- </block> -->
-  </scroll-view>
- 
-  <!-- 右侧的导航栏 -->
- </view>
+{{keyword}}
 </view>
 
 </template>
@@ -49,40 +11,14 @@ import request from '../../utils/request.js'
 export default {
 data(){
   return {
-    classify:[],
-    rightData:[],
+    keyword:'',
     tabIndex:0
   }
 },
-methods:{
-tapItem(index){
-  this.tabIndex=index;
-  // 先将数据清空，以防滚动滑到下面后，还是停留在底部的
-  this.rightData=[];
-  // 点击的时候数据更改
-  setTimeout(()=>{
-   this.rightData=this.classify[this.tabIndex].children;
-  },0)
-},
-tapGoodsList(name){
-  // 跳转使用a链接的形式，即在小程序中用到navigate
-  wx.navigateTo({ url: '/pages/goodslist/main'+'?keyword='+name });
-}
-},
-components:{
-Search
-},
-onLoad(){
-  wx.showLoading({
-    title: '客官请骚等', //提示的内容,
-    mask: true, //显示透明蒙层，防止触摸穿透,
-  });
- request("https://www.zhengzhicheng.cn/api/public/v1/categories").then(res=>{
-  //  console.log(res);
-   this.classify=res.data.message;
-   this.rightData=this.classify[this.tabIndex].children;
-   wx.hideLoading();
- })
+
+onLoad(name){
+// console.log(name);
+this.keyword=name.keyword;
 }
 }
 </script>
