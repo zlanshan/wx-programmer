@@ -1,14 +1,6 @@
 <template>
   <view> 
-    <!-- 搜索框 -->
-  <view class='search'>
-    <view class='search-in'>
-      <!-- 搜索图标 -->
-      <icon type='search' class='search-icon' size='16'></icon>
-      搜索
-    </view>
-  </view>
-  
+   <search></search>
   <!-- 轮播图 -->
   <swiper
   indicator-dots="true"
@@ -43,9 +35,10 @@
   <image mode="aspectfill"  :src="item.product_list[0].image_src"></image>
   </view>
   <view class="floor_content_right">
-    <!-- v-for 能嵌套v-if，，但是很多 编辑器可能会报错的
-     -->
+    <!-- v-for 能嵌套v-if，，但是很多 编辑器可能会报错的 -->
   <block v-for="(item2,index2) in item.product_list" :key="index2">
+    <!-- 因为product_list中还是有5个数据，因而继续循环这个的话还是五个循环，而且最后一个找不到的，这里也能进行判断，把最后一个删除的 -->
+    <!-- <image mode="aspectfill"  :src="item.product_list[index2+1].image_src"></image> -->
     <!-- 判断索引值，当索引值大于1时，再循环 -->
     <block  v-if="index2>=1">
     <image mode="aspectfill"  :src="item2.image_src"></image>
@@ -61,6 +54,7 @@
 </template>
 
 <script>
+import Search from '../../components/search'
 export default {
 data(){
   return {
@@ -70,6 +64,9 @@ data(){
     floor:[],
     product_list:[{}]
   }
+},
+components:{
+Search
 },
 onLoad(){
   // 轮播图的请求
@@ -116,23 +113,7 @@ onLoad(){
 </script>
 
 <style>
-.search{
-  padding:20rpx;
-  background-color: #eb4450;
-}
-.search-icon{
-  margin-right: 10rpx;
-  /* font-size:16rpx; */
-}
-.search-in{
- height:60rpx;
- background-color: #fff;
- color:#666;
- text-align: center;
- display: flex;
- justify-content: center;
- align-items: center;
-}
+
 /* 轮播图 */
 /* 轮播图有自己的高度。需要更改的他的高度，以防图片失真，缩放等 */
 swiper{
