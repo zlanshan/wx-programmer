@@ -17,8 +17,8 @@
 
   <scroll-view scroll-y class="nav_right">
     <!-- 大标题 -->
-    <block v-for="(item,index) in classify" :key="index">
-     <block v-for="(subItem,subIndex) in item.children" :key="subIndex">
+    <!-- <block v-for="(item,index) in classify" :key="index"> -->
+     <block v-for="(subItem,subIndex) in rightData" :key="subIndex">
      <view class="nav_right_title">
        <!-- <image mode="aspectfill" :src="subItem.cat_icon"></image> -->
        {{subItem.cat_name}}
@@ -34,7 +34,7 @@
        
     </view>
      </block>
-    </block>
+    <!-- </block> -->
   </scroll-view>
  
   <!-- 右侧的导航栏 -->
@@ -50,12 +50,15 @@ export default {
 data(){
   return {
     classify:[],
+    rightData:[],
     tabIndex:0
   }
 },
 methods:{
 tapItem(index){
   this.tabIndex=index;
+  // 点击的时候数据更改
+   this.rightData=this.classify[this.tabIndex].children;
 }
 },
 components:{
@@ -65,6 +68,7 @@ onLoad(){
  request("https://www.zhengzhicheng.cn/api/public/v1/categories").then(res=>{
    console.log(res);
    this.classify=res.data.message;
+   this.rightData=this.classify[this.tabIndex].children;
  })
 }
 }
@@ -136,7 +140,7 @@ onLoad(){
 .nav_right_title{
 text-align: center;
 font-size: 36rpx;
-margin: 20rpx 0;
+padding: 30rpx 0;
 }
 .nav_right_title::before,
 .nav_right_title::after{
