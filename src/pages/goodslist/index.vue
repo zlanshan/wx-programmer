@@ -141,7 +141,7 @@ export default {
   padding: 30rpx 20rpx;
   .search-input {
     height: 64rpx;
-    font-size: 36rpx;
+    font-size: 32rpx;
     color:#666;
     background-color: #fff;
     // display:flex是实现盒子内的子项垂直居中显示
