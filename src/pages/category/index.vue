@@ -7,31 +7,34 @@
   <view class="nav">
   <!-- 左侧的导航栏 scroll-view肯定要设置滚动的方向-->
   <scroll-view scroll-y class="nav_left">
-    <block v-for="(item,index) in [1,3,5,5,3,34,2,23,4,1,3,5,5,3,34,2,23,4,1,3,5,5,3,34,2,23,4]" :key="index">
+    <block v-for="(item,index) in classify" :key="index">
       <!-- "{active:'index===tabIndex'}" 这个方式是全选了？-->
       <!-- {active:index===tabIndex}对象的方式获取值？？ -->
-      <view class="item" :class="{active:index===tabIndex}" @tap="tapItem(index)">大家电</view>
+      <view class="item" :class="{active:index===tabIndex}" @tap="tapItem(index)">{{item.cat_name}}</view>
       </block>
   </scroll-view>
 
 
   <scroll-view scroll-y class="nav_right">
     <!-- 大标题 -->
-     <block v-for="(subItem,subIndex) in [1,4,3,5,34,2,3,43,2,3]" :key="subIndex">
+    <block v-for="(item,index) in classify" :key="index">
+     <block v-for="(subItem,subIndex) in item.children" :key="subIndex">
      <view class="nav_right_title">
-       <image mode="aspectfill" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3240052967,3443336204&fm=27&gp=0.jpg"></image>
-       <view>电视</view>
+       <!-- <image mode="aspectfill" :src="subItem.cat_icon"></image> -->
+       {{subItem.cat_name}}
     </view>
-     </block>
      <!-- 标题下的所有子项 -->
      <view class="nav_right_content">
-       <block v-for="(subItem,subIndex) in [1,4,3,5,34,2,3,43,2,3]" :key="subIndex">
+       <block v-for="(item3,index3) in subItem.children" :key="index3">
          <view class="subItem">
-       <image mode="aspectfill" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3240052967,3443336204&fm=27&gp=0.jpg"></image>
-       <view>电视</view>
+       <image mode="aspectfill" :src="item3.cat_icon"></image>
+       <view>{{item3.cat_name}}</view>
        </view>
        </block>
+       
     </view>
+     </block>
+    </block>
   </scroll-view>
  
   <!-- 右侧的导航栏 -->
@@ -46,11 +49,7 @@ import request from '../../utils/request.js'
 export default {
 data(){
   return {
-    imgUrls:[],
-    cateitems:[],
-    flag:false,
-    floor:[],
-    product_list:[{}],
+    classify:[],
     tabIndex:0
   }
 },
@@ -65,6 +64,7 @@ Search
 onLoad(){
  request("https://www.zhengzhicheng.cn/api/public/v1/categories").then(res=>{
    console.log(res);
+   this.classify=res.data.message;
  })
 }
 }
@@ -133,6 +133,18 @@ onLoad(){
   /* overflow: scroll; */
 
 }
+.nav_right_title{
+text-align: center;
+font-size: 36rpx;
+margin: 20rpx 0;
+}
+.nav_right_title::before,
+.nav_right_title::after{
+  content:'/';
+  margin:0 20rpx;
+  color:#999;
+}
+/* 这是设置标题图片的 */
 .nav_right_title image{
  width: 500rpx;
  height: 200rpx;
@@ -141,20 +153,23 @@ onLoad(){
 .nav_right_content{
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  font-size: 30rpx;
-  /* padding:20rpx; */
+  /* 这里若是设置了排列方式的，若一行的数据不够的话也会按这个排列方式排列的，不美观，直接设置默认的从头开始的 */
+  /* justify-content: space-around; */
+  
 }
 .nav_right_content .subItem{
   /* 图片少用百分比，多用定宽高，分区可以用百分比 */
-  width:30%;
+  width:33.3%;
   display: flex;
+  font-size: 30rpx;
+  padding:20rpx 0;
   flex-direction: column;
+  /* justify-content: start; */
   justify-content: space-between;
   align-items: center;
 }
 .nav_right_content .subItem image{
-  width:140rpx;
-  height:80rpx;
+  width:120rpx;
+  height:120rpx;
 }
 </style>
