@@ -4,38 +4,46 @@
     <view class="search">
       <view class="search-input">
         <icon type="search" size="40rpx"></icon>
-         <input type="text" placeholder="请输入你想要的商品"/>
+        <!-- value时动态变化的，这个是从商品列表页携带的数据，，v-model是键盘输入的实时变化数据 -->
+         <input type="text" 
+         placeholder="请输入你想要的商品" 
+         :value="keyword"
+         v-model="inputVal"
+         @confirm="inputSumbit"/>
       </view>
       <button
         size="mini"
         type="defult"
         class="cancel"
-        v-show="false"
+        v-show="inputVal.length>0"
+        @tap="clearData"
         >
         取消
       </button>
     </view>
 
     <!-- 历史搜索 -->
-    <view class="history-title">
+    <view class="history-title" v-show="history.length>0 || 0">
       <text>历史搜索</text>
       <icon
         type="clear"
-        size="34rpx">
+        size="34rpx"
+        @tap="handleClear">
       </icon>
     </view>
     <!-- 历史列表 -->
     <view class="history-list">
-      <block v-for="(item,index) in [13,2,3,5]" :key="index">
+      <!-- history.length>0 || 0 -->
+      <block v-for="(item,index) in history" :key="index">
         <view class="history-list-item">
-         {{item}}
+          {{item}}
         </view>
       </block>
     </view>
 
     <!-- 搜索提示 -->
-    <view class="search-tips">
-      <block v-for="(item,index) in [1,3,4,6,83,23]" :key="index">
+    <view class="search-tips" v-show="false">
+      <block v-for="(item,index) in tips" :key="index">
       <view class="search-tips-item">
          {{item}}
       </view>
@@ -46,7 +54,45 @@
 
 <script>
 export default {
-
+    data(){
+      return {
+        keyword:'',
+        inputVal:'',
+        history:[],
+        tips:''
+      }
+    },
+    methods:{
+       inputSumbit(){
+        //  历史数据添加到前面
+        // console.log(this.history)
+         this.history.unshift(this.inputVal);
+        //  将数据保存到本地存储中
+         wx.setStorageSync('history',this.history);
+        
+       },
+      //  处理清空历史记录
+       handleClear(){
+        //  设置当前的数组为空，后面开始也是调用空数组的
+         this.history=[];
+        //  在清空本地存储的历史记录
+         wx.clearStorage();
+       },
+      //  点击取消按钮清空数据
+      clearData(){
+        // 即这个inputval为空，亦是空字符串是没有长度的
+         this.inputVal='';
+      }    
+      },
+    // 页面隐藏和显示后能在此执行的
+    onShow(){
+      // 获取本地存储中的history历史记录值和第一次是没有历史记录的，如果不设置为空数组，后面history不是数组
+       this.history=wx.getStorageSync('history') || [];
+    },
+    onLoad(query){
+      this.keyword=query.keyword;
+      // console.log(this.keyword);
+    }
 }
 </script>
 
