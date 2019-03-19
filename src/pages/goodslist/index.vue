@@ -53,7 +53,9 @@ export default {
       tabItem:["综合","销量","价格"],
       tabIndex: 0,
       searchItem:[],
-      hotNum:[1,3,5,3,7,2]
+      hotNum:[1,3,5,3,7,2],
+      pagenum:1,
+      pagesize:20
     }
   },
 
@@ -61,76 +63,86 @@ export default {
     tabAll(index){
       this.tabIndex=index;
       console.log(index);
-  if(index===1){
-      var hotNum=this.hotNum;
-      var max=hotNum[0];
-      var min=hotNum[0];
-      // 还得再判断下到底是选择哪种排列顺序的
-      getMax();
-       //  从大到小排列
-   function getMax() { 
-     for(let i=0;i<hotNum.length;i++){
-       for(let j=1;j<hotNum.length;j++){
-         if(hotNum[i]<hotNum[j]){
-        // hotNum[j]如果此值大就付给max，这种类似于变量交换
-          max=hotNum[j];
-        //  并将小的值再次赋值给hotNum[j],存放
-          hotNum[j]=hotNum[i];
-        //  最后将j和i的值相交换，最后还是拿比较hotNum[i]<hotNum[j]比较
-          hotNum[i]=max;
-        }
-      }
-     }
-       console.log(hotNum);
-     };
+      if(index===1){
+        var hotNum=this.hotNum;
+        var max=hotNum[0];
+        var min=hotNum[0];
+        // 还得再判断下到底是选择哪种排列顺序的
+        getMax();
+        //  从大到小排列
+        function getMax() { 
+          for(let i=0;i<hotNum.length;i++){
+            for(let j=1;j<hotNum.length;j++){
+              if(hotNum[i]<hotNum[j]){
+              // hotNum[j]如果此值大就付给max，这种类似于变量交换
+                max=hotNum[j];
+              //  并将小的值再次赋值给hotNum[j],存放
+                hotNum[j]=hotNum[i];
+              //  最后将j和i的值相交换，最后还是拿比较hotNum[i]<hotNum[j]比较
+                hotNum[i]=max;
+              }
+            }
+          }
+        console.log(hotNum);
+      };
     
-     //  从小到大排列
-     function getMin() { 
-      for(let i=0;i<hotNum.length;i++){
-       for(let j=1;j<hotNum.length;j++){ 
-        if(hotNum[i]>hotNum[j]){
-        // hotNum[j]如果此值大就付给max，这种类似于变量交换
-         min=hotNum[j];
-        //  并将小的值再次赋值给hotNum[j],存放
-         hotNum[j]=hotNum[i];
-        //  最后将j和i的值相交换，最后还是拿比较hotNum[i]<hotNum[j]比较
-         hotNum[i]=min;
-       }
-      }  
-     }
-     console.log(hotNum);
-   };
+          //  从小到大排列
+        function getMin() { 
+            for(let i=0;i<hotNum.length;i++){
+            for(let j=1;j<hotNum.length;j++){ 
+              if(hotNum[i]>hotNum[j]){
+              // hotNum[j]如果此值大就付给max，这种类似于变量交换
+              min=hotNum[j];
+              //  并将小的值再次赋值给hotNum[j],存放
+              hotNum[j]=hotNum[i];
+              //  最后将j和i的值相交换，最后还是拿比较hotNum[i]<hotNum[j]比较
+              hotNum[i]=min;
+            }
+            }  
+          }
+          console.log(hotNum);
+        };
 
-    }else if(index===2){
-      // 这是点击价格
-    }
-   }
-
-  },
-  onLoad(query) {
-    console.log(query);
-    this.keyword = query.keyword;
-
-    wx.request({
-      url: 'https://www.zhengzhicheng.cn/api/public/v1/goods/search', //开发者服务器接口地址",
-      data: {query:this.keyword}, //请求的参数query,
-      method: 'GET',
-      success: res => {
-        // console.log(res);
-        if(res.data.meta.status===200){
-        this.searchItem=res.data.message.goods;
-        // this.hotNum=res.data.message.goods[]
-        // 下面是获取当前商品的销量
-        let arr=[];
-        this.searchItem.forEach((v)=>{
-         arr.push(v.hot_mumber);
-        })
-        this.hotNum=arr;
-        // console.log(this.hotNum);
+          }else if(index===2){
+            // 这是点击价格
+          }
         }
+
+    },
+    onLoad(query) {
+       // console.log(query);
+       this.keyword = query.keyword;
+       //  自己封装的函数，参数写全，没有的会设置默认值，request请求和request.get()请求
+       request.get("goods/search",{query:this.keyword},{}).then(res=>{
+        if(res.data.meta.status===200){
+          this.searchItem=res.data.message.goods;
+            }
+          })
+        //#region 
+          // wx.request({
+          //   url: 'https://www.zhengzhicheng.cn/api/public/v1/goods/search', //开发者服务器接口地址",
+          //   data: {query:this.keyword}, //请求的参数query,
+          //   method: 'GET',
+          //   success: res => {
+          //     // console.log(res);
+          //     if(res.data.meta.status===200){
+          //     this.searchItem=res.data.message.goods;
+          //     // this.hotNum=res.data.message.goods[]
+          //     // 下面是获取当前商品的销量
+          //     let arr=[];
+          //     this.searchItem.forEach((v)=>{
+          //      arr.push(v.hot_mumber);
+          //     })
+          //     this.hotNum=arr;
+          //     // console.log(this.hotNum);
+          //     }
+          //   },
+          // });
+        //#endregion
       },
-    });
-  }
+      onReachBottom(){
+        
+      },
 };
 </script>
 

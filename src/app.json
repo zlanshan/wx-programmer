@@ -6,8 +6,8 @@
         "pages/cart/main",
         "pages/mine/main",
         "pages/search/main",
-        "pages/goodslist/main"
-
+        "pages/goodslist/main",
+        "pages/goodsdetail/main"
     ],
     "window": {
         "backgroundTextStyle": "light",
