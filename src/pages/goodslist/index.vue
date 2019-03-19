@@ -39,6 +39,8 @@
     </view>
     </block>
 </view>
+<!-- 下拉加载的 -->
+ <view class="loading" v-show="!hasMore">我是有底线的....</view>
 
   </view>
 </template>
@@ -46,20 +48,87 @@
 <script>
 import Search from "../../components/search";
 import request from "../../utils/request.js";
+import {getSearch} from "@/api/index.js"
 export default {
   data() {
     return {
+      // 关键词搜索
       keyword: "",
       tabItem:["综合","销量","价格"],
+      // 导航栏的tabIndex判断激活的是哪个tabItem
       tabIndex: 0,
+      // 搜索到的数据
       searchItem:[],
       hotNum:[1,3,5,3,7,2],
+      // 当前页和煤业的数量
       pagenum:1,
-      pagesize:20
+      pagesize:20,
+      // 设置我是有底线的显示与隐藏的布尔类型值
+      hasMore:true
     }
   },
+  onLoad(query) {
+      // console.log(query);
+      this.keyword = query.keyword;
+      // getSearch({query:this.keyword});
+      this.getData();
+  },
 
+// 页面触底事件，若还有数据，就继续加载，没有的话就显示我是有底线的
+  onReachBottom(){
+     // 页面触底的时候页调用获取数据的函数
+    this.getData();
+  },
+  // 页面卸载时触发，如redirectTo或navigateBack到其他页面时
+  onUnload(){
+    //   初始化数据，防止小程序页面 data 数据的缓存
+   this.initData();
+  },
+  // 监听用户下拉刷新事件
+  onPullDownRefresh(){
+    // 初始化页面数据
+    this.initData();
+    // 重新请求数据
+    this.getData();
+  },
   methods:{
+    initData(){
+      this.pagenum=1;
+      // 重新初始化页面数据时，须将此值设置true，先不让其显示
+      this.hasMore=true;
+      this.searchItem=[];
+    },
+    // 封装获取数据的方法
+    getData(){
+      // 如果为真，就不执行请求数据
+      if(!this.hasMore) return;  
+      wx.showLoading({
+        title: 'Loading...', //提示的内容,
+        mask: true, //显示透明蒙层，防止触摸穿透,
+      });
+      // getSearch是封装好的统一管理的请求数据的，只需传参进去即可
+       getSearch({
+          query:this.keyword,
+          pagenum:this.pagenum,
+          pagesize:this.pagesize}).then(res=>{
+            const {message,meta}=res.data;
+            if(meta.status===200){
+              // this.searchItem=message.goods;
+              // 拼接数组并赋值，否则就不是hi个新的数组值
+              this.searchItem=this.searchItem.concat(message.goods);
+              // this.searchItem=[...this.searchItem,...goods];
+              // 当前页的数据请求完后，若还有多余的数据，在此请求时即从第二页再开始，即页面数加一
+              this.pagenum++;
+              // 当请求回来的goods数据小于每一页应该请求回来的数据时，就表示没有多余的数据了，就设置我是有底线的
+              if(message.goods.length<this.pagesize){
+                this.hasMore=false;
+              }
+              wx.hideLoading();
+               // 把下拉刷新动画页停止
+            wx.stopPullDownRefresh();
+            }
+      })
+    },
     tabAll(index){
       this.tabIndex=index;
       console.log(index);
@@ -108,16 +177,14 @@ export default {
           }
         }
 
-    },
-    onLoad(query) {
-       // console.log(query);
-       this.keyword = query.keyword;
+    }
+    
        //  自己封装的函数，参数写全，没有的会设置默认值，request请求和request.get()请求
-       request.get("goods/search",{query:this.keyword},{}).then(res=>{
-        if(res.data.meta.status===200){
-          this.searchItem=res.data.message.goods;
-            }
-          })
+      //  request.get("goods/search",{query:this.keyword},{}).then(res=>{
+      //   if(res.data.meta.status===200){
+      //     this.searchItem=res.data.message.goods;
+      //       }
+      //     })
         //#region 
           // wx.request({
           //   url: 'https://www.zhengzhicheng.cn/api/public/v1/goods/search', //开发者服务器接口地址",
@@ -139,11 +206,8 @@ export default {
           //   },
           // });
         //#endregion
-      },
-      onReachBottom(){
-        
-      },
-};
+
+}
 </script>
 
 <style lang="scss">
@@ -225,5 +289,12 @@ export default {
       }
     }
   }
+}
+
+.loading{
+    line-height: 80rpx;
+    text-align: center;
+    font-size:14px;
+    color:#999;
 }
 </style>

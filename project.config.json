@@ -42,7 +42,7 @@
 					"id": 1,
 					"name": "商品列表页",
 					"pathName": "pages/goodslist/main",
-					"query": "keyword=小米",
+					"query": "keyword=小",
 					"scene": null
 				}
 			]
