@@ -10,7 +10,8 @@
          :value="keyword"
          v-model="inputVal"
          @confirm="inputSumbit"
-         @input="inputHandle"/>
+         @input="inputHandle"
+         />
       </view>
       <button
         size="mini"
@@ -65,6 +66,17 @@ export default {
       }
     },
     methods:{
+       historyS(str){
+          // 这样判断后肯定只能是找到相同的一个的
+          for(let i=0;i<this.history.length;i++){
+            if(this.history[i]===str){
+              this.history.splice(i,1);
+            }
+          }
+          this.history.unshift(str);
+           //  将数据保存到本地存储中
+          wx.setStorageSync('history',this.history); 
+      },
        // 输入框点击完成的事件处理函数
        inputSumbit(){
         //  历史数据添加到前面
@@ -73,17 +85,8 @@ export default {
           // 当点击完成时，没输入内容，其提示框自动隐藏
            this.tips=[];
         }else {
-          // 这样判断后肯定只能是找到相同的一个的
-          for(let i=0;i<this.history.length;i++){
-            if(this.history[i]===this.inputVal){
-              this.history.splice(i,1);
-            }
-          }
-           this.history.unshift(this.inputVal);
-           //  将数据保存到本地存储中
-           wx.setStorageSync('history',this.history); 
-        }
-        
+         this.historyS(this.inputVal);
+        } 
        },
       //  // 5.0 输入框输入内容的时候触发
       inputHandle(){
@@ -94,11 +97,11 @@ export default {
            }
          });
       },
+      // 点击提示信息的跳转页面
       gotoGoodsDetail(id,name){
           // console.log(name);
           // 点击后该数据也应该进入历史记录中的，同时也要存入本地存储中
-          this.history.unshift(name);
-          wx.setStorageSync('history',this.history); 
+          this.historyS(name);
           wx.navigateTo({ url: '/pages/goodsdetail/main?goods_id='+id });
           // 这是当再次返回此页面时开始其提示信息无
           this.tips=[];
@@ -147,7 +150,7 @@ export default {
   background-color: #eee;
   // height: 100rpx;
   padding: 30rpx 20rpx;
-  .search-input {
+  .search-input {  
     flex:1;
     height: 64rpx;
     font-size: 32rpx;
@@ -163,6 +166,13 @@ export default {
     margin-left: 30rpx;
     margin-right: 20rpx;
   }
+//   input[type="text"]{
+//  // 搜索框输入的内容不能太长的，如何设置写入的内容宽度呢？？
+//     max-width: 400rpx;
+//     white-space: nowrap;
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//   }
   .cancel{
     margin-left:20rpx;
     width:160rpx;
