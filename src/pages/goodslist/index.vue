@@ -94,7 +94,8 @@ export default {
   methods:{
     // 点击进入搜索页面
     gotoSearch(key){
-      wx.navigateTo({ url: '/pages/search/main?keyword='+key });
+      // 这设置了替代当前页，既不能后退的
+      wx.redirectTo({ url: '/pages/search/main?keyword='+key });
     },
     // 点击进入商品详情页面
     gotoGoodsList(id){
