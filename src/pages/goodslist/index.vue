@@ -2,7 +2,7 @@
   <view>
     <!-- 搜索框 -->
     <view class="search">
-      <view class="search-input">
+      <view class="search-input" @tap="gotoSearch(keyword)">
         <icon type="search" size="40rpx"></icon>
         {{keyword}}
       </view>
@@ -22,7 +22,7 @@
     <!-- 商品搜索列表 -->
     <view>
       <block v-for="(item,index) in searchItem" :key="index">
-    <view class="goods_item">
+    <view class="goods_item" @tap="gotoGoodsList(item.goods_id)">
       <!-- 右边图片的 -->
       <view class="goods_item_left">
         <image mode="aspectfill" :src="item.goods_small_logo"></image>
@@ -92,6 +92,15 @@ export default {
     this.getData();
   },
   methods:{
+    // 点击进入搜索页面
+    gotoSearch(key){
+      wx.navigateTo({ url: '/pages/search/main?keyword='+key });
+    },
+    // 点击进入商品详情页面
+    gotoGoodsList(id){
+      wx.navigateTo({ url: '/pages/goodsdetail/main?goods_id='+id });
+    },
+    // 初始化页面数据
     initData(){
       this.pagenum=1;
       // 重新初始化页面数据时，须将此值设置true，先不让其显示
